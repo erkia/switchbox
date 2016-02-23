@@ -146,7 +146,7 @@ int pwrusb_get_state (pwrusb_ctx *ctx, int *state)
 {
     uint8_t cmd = 0x80;
 
-	*state = 0;
+    *state = 0;
 
     if (write (ctx->fd, &cmd, 1) != 1) {
         return -1;

@@ -23,7 +23,7 @@ LIBPWRUSB_DLL_EXPORTED int pwrusb_set (pwrusb_ctx *ctx, int mask, int state)
         state &= mask;
         state |= (old_state & ~mask);
     }
-	
+
     if (pwrusb_set_state (ctx, &state) != 0) {
         return -1;
     }
