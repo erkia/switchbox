@@ -21,10 +21,10 @@ LIBPWRUSB_DLL_EXPORTED int pwrusb_search (const char *search_serial, char *buf, 
     const char *serial, *node;
 
     if (strlen (search_serial) == 0) {
-		return -1;
-	}
+        return -1;
+    }
 
-	// Create the udev object
+    // Create the udev object
     udev = udev_new ();
     if (udev == NULL) {
         return -1;
@@ -39,16 +39,16 @@ LIBPWRUSB_DLL_EXPORTED int pwrusb_search (const char *search_serial, char *buf, 
     udev_list_entry_foreach (dev_list_entry, devices) {
 
         // Get the filename of the /sys entry for the device and create a udev_device object representing it
-	    dev = udev_device_new_from_syspath (udev, udev_list_entry_get_name (dev_list_entry));
+        dev = udev_device_new_from_syspath (udev, udev_list_entry_get_name (dev_list_entry));
         if (dev == NULL) {
             continue;
         }
 
-	    parent = udev_device_get_parent_with_subsystem_devtype (dev, "usb", "usb_device");
-	    if (parent == NULL) {
+        parent = udev_device_get_parent_with_subsystem_devtype (dev, "usb", "usb_device");
+        if (parent == NULL) {
     	    udev_device_unref (dev);
             continue;
-	    }
+        }
 
         serial = udev_device_get_sysattr_value (parent, "serial");
 
@@ -67,7 +67,7 @@ LIBPWRUSB_DLL_EXPORTED int pwrusb_search (const char *search_serial, char *buf, 
 
         }
 
-	    udev_device_unref (dev);
+        udev_device_unref (dev);
 
     }
 
@@ -81,7 +81,7 @@ LIBPWRUSB_DLL_EXPORTED int pwrusb_search (const char *search_serial, char *buf, 
 
 LIBPWRUSB_DLL_EXPORTED int pwrusb_init (pwrusb_ctx *ctx)
 {
-	ctx->fd = -1;
+    ctx->fd = -1;
     return 0;
 }
 
