@@ -22,14 +22,14 @@ install: pwrusb
 
 pwrusb:
 	PLATFORM=$(PLATFORM) make -C $(SRCDIR)
-	gcc $(OPTS) -o pwrusb_set pwrusb_set.c $(LIBS)
+	gcc $(OPTS) -o pwrusb_tool pwrusb_tool.c $(LIBS)
 
 clean:
 	make -C $(SRCDIR) clean
 ifneq ($(PLATFORM),win32)
-	rm -f pwrusb_set
+	rm -f pwrusb_tool
 else
-	rm -f pwrusb_set.exe
+	rm -f pwrusb_tool.exe
 endif
 
 scratch: clean all
