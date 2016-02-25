@@ -37,7 +37,7 @@ int main (int argc, char **argv)
     int index;
     int c;
 
-    opterr = 0;
+    opterr = 1;
 
     while ((c = getopt (argc, argv, "d:hm:n:s:")) != -1) {
 
@@ -55,13 +55,6 @@ int main (int argc, char **argv)
                 state = read_hex (optarg);
                 break;
             case '?':
-                if (optopt == 'c') {
-                    fprintf (stderr, "Option -%c requires an argument\n", optopt);
-                } else if (isprint (optopt)) {
-                    fprintf (stderr, "Unknown option '-%c'\n", optopt);
-                } else {
-                    fprintf (stderr, "Unknown option character '\\x%x'\n", optopt);
-                }
                 print_help_and_exit (1);
             default:
                 abort ();
@@ -70,21 +63,25 @@ int main (int argc, char **argv)
 
     // No non-option arguments
     if (optind != argc) {
+        fprintf (stderr, "%s: extraneous arguments\n", argv[0]);
         print_help_and_exit (1);
     }
 
-    // Invalid state or mask
-    if (state < -1 || mask < -1) {
+    // Invalid state
+    if (state < -1 || state > 0xFF) {
+        fprintf (stderr, "%s: invalid state\n", argv[0]);
         print_help_and_exit (1);
     }
 
-    // State expects serial number or device
-    if (state != -1 && !serial_number && !device) {
+    // Invalid mask
+    if (mask < -1 || mask > 0xFF) {
+        fprintf (stderr, "%s: invalid mask\n", argv[0]);
         print_help_and_exit (1);
     }
 
     // Mask expects state
     if (mask != -1 && state == -1) {
+        fprintf (stderr, "%s: '-s' expected\n", argv[0]);
         print_help_and_exit (1);
     }
 
@@ -99,14 +96,22 @@ int main (int argc, char **argv)
 
         if (pwrusb_search (serial_number, search_device, sizeof (search_device)) > 0) {
             if (device == NULL) {
+                printf ("Found PWR-USB Switchbox #%s at %s\n", serial_number, device);
                 device = search_device;
             } else {
+#ifdef _WIN32
+                if (strcmpi (device, search_device)) {
+#else
                 if (strcmp (device, search_device)) {
+#endif
+                    fprintf (stderr, "%s: could not find PWR-USB Switchbox #%s at %s\n", argv[0], serial_number, device);
                     print_help_and_exit (1);
                 }
             }
+        } else {
+            fprintf (stderr, "%s: could not find PWR-USB Switchbox #%s\n", argv[0], serial_number);
+            print_help_and_exit (1);
         }
-        printf ("Found PWR-USB Switchbox #%s at %s\n", serial_number, device);
 
     } else if (device != NULL) {
 
@@ -114,6 +119,7 @@ int main (int argc, char **argv)
 
     } else {
 
+        fprintf (stderr, "%s: '-n' or '-d' expected\n", argv[0]);
         print_help_and_exit (1);
 
     }
